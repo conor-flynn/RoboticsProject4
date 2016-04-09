@@ -24,7 +24,7 @@ Skynet
   Figure out how to properly do shadows even though they aren't required
 
 
-# Tips
+#### Tips
 
   The 'opengl_files' folder now has everything that is required to get openGl running. Remove the opengl-files changes from the previous project because they might interfer. http://aschultz.us/blog/archives/176
   
