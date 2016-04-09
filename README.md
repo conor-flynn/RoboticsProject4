@@ -28,7 +28,7 @@ Skynet
 
   The 'opengl_files' folder now has everything that is required to get openGl running. Remove the opengl-files changes from the previous project because they might interfer. http://aschultz.us/blog/archives/176
   
-  New stuff: 
+  New stuff: (All of these folders and files will be inside the opengl_files folder)
   
   Configuration Properties -> C/C++ -> General -> Additional Include Directories.....Select the 'include' folder for glut and glew (separately, so you will have two entries).
   
