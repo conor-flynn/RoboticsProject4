@@ -11,11 +11,13 @@ Skynet
   
   Read robots from file
   
-  Make sure robot's brains are processing correctly.
+  Make sure robot's brains are processing correctly (The matrix math in Creature.cpp processSensors)
+  
+  Find better lighting formula (attenuation? -- for Light.frag)
+  
+  Determine if ambient lighting is a good thing to have
   
 #### Extra TODO:
-
-  Try different lighting algorithms in Light.frag just to see what happens
   
   Move stuff out of main.cpp
   
