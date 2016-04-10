@@ -23,7 +23,7 @@ Skynet
   
 #### Extra Extra TODO:
 
-  (Conor) Figure out how to properly do shadows even though they aren't required
+  (Conor) Make shadows better? Idk.
 
 
 # Tips
