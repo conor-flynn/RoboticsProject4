@@ -67,8 +67,9 @@ vector<Vector2> Creature::getSensors() {
 
 	// These hardcoded values are dependent on the design of the robot.
 	// Technically they can be set to anything, but they should match the robot.
-	Vector2 left = Vector2(20, 20).rotate(direction).add(location);
-	Vector2 right = Vector2(-20, 20).rotate(direction).add(location);
+	float yDistance = 25;
+	Vector2 left = Vector2(20, yDistance).rotate(direction).add(location);
+	Vector2 right = Vector2(-20, yDistance).rotate(direction).add(location);
 
 	vector<Vector2> result;
 	result.push_back(left);

@@ -10,7 +10,7 @@ using namespace std;
 class Creature {
 public:
 
-	const float robot_speed = 1.5f;
+	const float robot_speed = 0.5f;
 
 	Vector2 location;
 	float direction;
