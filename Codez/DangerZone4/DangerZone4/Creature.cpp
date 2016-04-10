@@ -55,7 +55,9 @@ void Creature::processSensors(float left, float right) {
 	float left_wheel = (k11*left) + (k12*right);
 	float right_wheel = (k21*left) + (k22*right);
 
-	direction += (right_wheel - left_wheel)*10;
+	float turnAmount = 25.0f;
+
+	direction += (right_wheel - left_wheel)*turnAmount;
 	float speed = right_wheel + left_wheel;
 
 	// '3' is hardcoded. Just controls the value of the total speed of the robots
