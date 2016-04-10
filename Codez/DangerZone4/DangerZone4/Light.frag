@@ -35,7 +35,7 @@ void main() {
 
 
 	// Makes the light a 'point light' - where it only is a tiny circle of light
-	if (distance < 25) light = 1;
+	if (distance < 5) light = 1;
 	else light = 0;
 		
 

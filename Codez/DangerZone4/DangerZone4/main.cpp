@@ -18,8 +18,8 @@ using namespace std;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
-const int num_creatures = 100;
-const int num_lights = 200;
+const int num_creatures = 75;
+const int num_lights = 500;
 
 vector<Light*> lights;
 vector<Creature*> creatures;
