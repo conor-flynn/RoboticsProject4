@@ -18,8 +18,8 @@ using namespace std;
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
-const int num_creatures = 10;
-const int num_lights = 5;
+const int num_creatures = 100;
+const int num_lights = 200;
 
 vector<Light*> lights;
 vector<Creature*> creatures;
@@ -68,59 +68,60 @@ void drawRect(int x0, int y0, int width, int height, float z = 0) {
 }
 
 void drawLights() {
-	float ambience = 0.25f;
+	float ambience = 0.4f;
 	glClearColor(ambience, ambience, ambience,1); // Ambient lighting
 	for (Light* light : lights) {
 
-		// --- Clear / Setup process
-			glUseProgram(0);
+		//// --- Clear / Setup process
+		//	glUseProgram(0);
 
-			glColorMask(1, 1, 1, 1);
-			glDepthMask(GL_TRUE);
-			glEnable(GL_DEPTH_TEST);
+		//	glColorMask(1, 1, 1, 1);
+		//	glDepthMask(GL_TRUE);
+		//	glEnable(GL_DEPTH_TEST);
 
-			glClearDepth(0);
-			glClear(GL_DEPTH_BUFFER_BIT);	// We only clear the depth bit, not the colors. Otherwise that will override the other lights.
+		//	glClearDepth(0);
+		//	glClear(GL_DEPTH_BUFFER_BIT);	// We only clear the depth bit, not the colors. Otherwise that will override the other lights.
 
-			// These four lines repeat a process because 'glClearDepth(0)' doesn't clear to 0....!
-			glEnable(GL_DEPTH_TEST);
-			glDepthFunc(GL_ALWAYS);
-			glColorMask(0, 0, 0, 0);
-			drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-		// Setup for a light is complete.
-
-
-		for (Creature* creature : creatures) {
-			vector<Vector2> vertices = creature->getVertices();
-			for (int i = 0; i < vertices.size(); i++) {
-				Vector2 currentVertex = vertices[i];
-				Vector2 nextVertex = vertices[(i + 1) % vertices.size()];
-				Vector2 edge = Vector2::subtract(nextVertex, currentVertex);
-				Vector2 normal = Vector2(edge.getY(), -edge.getX());
-				Vector2 lightToCurrent = Vector2::subtract(currentVertex, light->location);
+		//	// These four lines repeat a process because 'glClearDepth(0)' doesn't clear to 0....!
+		//	glEnable(GL_DEPTH_TEST);
+		//	glDepthFunc(GL_ALWAYS);
+		//	glColorMask(0, 0, 0, 0);
+		//	drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+		//// Setup for a light is complete.
 
 
-				if (Vector2::dot(normal, lightToCurrent) > 0) {
-					Vector2 point1 = Vector2::add(currentVertex, Vector2::subtract(currentVertex, light->location).scale(800));
-					Vector2 point2 = Vector2::add(nextVertex, Vector2::subtract(nextVertex, light->location).scale(800));
+		//for (Creature* creature : creatures) {
+		//	vector<Vector2> vertices = creature->getVertices();
+		//	for (int i = 0; i < vertices.size(); i++) {
+		//		Vector2 currentVertex = vertices[i];
+		//		Vector2 nextVertex = vertices[(i + 1) % vertices.size()];
+		//		Vector2 edge = Vector2::subtract(nextVertex, currentVertex);
+		//		Vector2 normal = Vector2(edge.getY(), -edge.getX());
+		//		Vector2 lightToCurrent = Vector2::subtract(currentVertex, light->location);
 
-					float zed = 1;
-					glBegin(GL_QUADS); {
-					glVertex3f(currentVertex.getX(), currentVertex.getY(), zed);
-					glVertex3f(point1.getX(), point1.getY(), zed);
-					glVertex3f(point2.getX(), point2.getY(), zed);
-					glVertex3f(nextVertex.getX(), nextVertex.getY(), zed);
-					} glEnd();
 
-				}
-			}
-		}
+		//		if (Vector2::dot(normal, lightToCurrent) > 0) {
+		//			Vector2 point1 = Vector2::add(currentVertex, Vector2::subtract(currentVertex, light->location).scale(800));
+		//			Vector2 point2 = Vector2::add(nextVertex, Vector2::subtract(nextVertex, light->location).scale(800));
+
+		//			float zed = 1;
+		//			glBegin(GL_QUADS); {
+		//			glVertex3f(currentVertex.getX(), currentVertex.getY(), zed);
+		//			glVertex3f(point1.getX(), point1.getY(), zed);
+		//			glVertex3f(point2.getX(), point2.getY(), zed);
+		//			glVertex3f(nextVertex.getX(), nextVertex.getY(), zed);
+		//			} glEnd();
+
+		//		}
+		//	}
+		//}
 		
 
 		// Shadows are drawn. Now we draw the dank lights
 
 		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_EQUAL);	// Draws light (blending) when the depth of a pixel is equal to 0
+		// glDepthFunc(GL_EQUAL);	// Draws light (blending) when the depth of a pixel is equal to 0
+		glDepthFunc(GL_ALWAYS);
 		glColorMask(1, 1, 1, 1);
 
 		glUseProgram(shaderProgram);
@@ -294,12 +295,16 @@ void buildCreatures() {
 	for (int i = 0; i < num_creatures; i++) {
 		float locx = (random() * SCREEN_WIDTH);
 		float locy = (random() * SCREEN_HEIGHT);
+		float direction = (random() * 360);
 		float k11 = random();
 		float k12 = random();
 		float k21 = random();
 		float k22 = random();
 
-		creatures.push_back(new Creature(Vector2(locx, locy), k11, k12, k21, k22));
+		k11 = k22 = 0;
+		k12 = k21 = 1;
+
+		creatures.push_back(new Creature(Vector2(locx, locy), direction, k11, k12, k21, k22));
 	}
 }
 

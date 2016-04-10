@@ -20,7 +20,7 @@ public:
 	float k11, k12, k21, k22;
 
 
-	Creature(Vector2 location, float k11, float k12, float k21, float k22);
+	Creature(Vector2 location, float direction, float k11, float k12, float k21, float k22);
 
 	vector<Vector2> getVertices();
 

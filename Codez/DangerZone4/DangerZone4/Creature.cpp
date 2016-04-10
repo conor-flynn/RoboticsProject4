@@ -2,16 +2,21 @@
 
 
 
-Creature::Creature(Vector2 location, float k11, float k12, float k21, float k22) {
+Creature::Creature(Vector2 location, float direction, float k11, float k12, float k21, float k22) {
 	this->location = location;
-	this->direction = 0;
+	this->direction = direction;
 	this->k11 = k11;
 	this->k12 = k12;
 	this->k21 = k21;
 	this->k22 = k22;
 
+	baseVertices.push_back(Vector2(-5, 0));
+	baseVertices.push_back(Vector2(0, 5));
+	baseVertices.push_back(Vector2(5, 0));
+
+
 	// Super artistic design for the robot.
-	baseVertices.push_back(Vector2(15, 5));
+	/*baseVertices.push_back(Vector2(15, 5));
 	baseVertices.push_back(Vector2(18, 20));
 	baseVertices.push_back(Vector2(20, 20));
 	baseVertices.push_back(Vector2(23, 5));
@@ -30,7 +35,7 @@ Creature::Creature(Vector2 location, float k11, float k12, float k21, float k22)
 	baseVertices.push_back(Vector2(-23, 5));
 	baseVertices.push_back(Vector2(-20, 20));
 	baseVertices.push_back(Vector2(-18, 20));
-	baseVertices.push_back(Vector2(-15, 5));
+	baseVertices.push_back(Vector2(-15, 5));*/
 }
 
 vector<Vector2> Creature::getVertices() {
@@ -50,7 +55,7 @@ void Creature::processSensors(float left, float right) {
 	float left_wheel = (k11*left) + (k12*right);
 	float right_wheel = (k21*left) + (k22*right);
 
-	direction += (right_wheel - left_wheel);
+	direction += (right_wheel - left_wheel)*10;
 	float speed = right_wheel + left_wheel;
 
 	// '3' is hardcoded. Just controls the value of the total speed of the robots
@@ -66,10 +71,11 @@ vector<Vector2> Creature::getSensors() {
 	// Get the two Vector2's of the sensors
 
 	// These hardcoded values are dependent on the design of the robot.
-	// Technically they can be set to anything, but they should match the robot.
-	float yDistance = 25;
-	Vector2 left = Vector2(20, yDistance).rotate(direction).add(location);
-	Vector2 right = Vector2(-20, yDistance).rotate(direction).add(location);
+	// Technically they can be set to anything, but they should match the robot a little
+	float xDistance = 5;
+	float yDistance = 10;
+	Vector2 left  = Vector2( xDistance, yDistance).rotate(direction).add(location);
+	Vector2 right = Vector2(-xDistance, yDistance).rotate(direction).add(location);
 
 	vector<Vector2> result;
 	result.push_back(left);
