@@ -4,6 +4,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -142,16 +144,6 @@ void drawLights() {
 	}
 }
 
-void tempSquare(int x, int y) {
-	glBegin(GL_QUADS);
-	float size = 5.0f;
-	glVertex2f(x - size, y - size);
-	glVertex2f(x - size, y + size);
-	glVertex2f(x + size, y + size);
-	glVertex2f(x + size, y - size);
-	glEnd();
-}
-
 void drawCreatures() {
 	
 	// We aren't 'blending' the creatures to the light, we just draw the creature
@@ -219,7 +211,7 @@ char* readFile(char* file_name, unsigned long & size) {
 	return data;
 }
 
-void testingInitialization() {
+void setupGlut() {
 
 	unsigned long size_of_shader_file = 0;
 	char* shader_data = readFile("Light.frag", size_of_shader_file);
@@ -258,8 +250,6 @@ void testingInitialization() {
 	struct stat info;
 	char* pathname = "Debug";
 	if ( stat(pathname, &info) == 0 && (info.st_mode & S_IFDIR) ) {
-		cout << "Overwritting Light.frag" << endl;
-
 		FILE* debug_shader = fopen("../Debug/Light.frag", "w");
 		fwrite(shader_data, sizeof(char), size_of_shader_file, debug_shader);
 		fclose(debug_shader);
@@ -276,16 +266,9 @@ void testingInitialization() {
 }
 
 void buildLights() {
-	////lights.push_back(new Light(Vector2(100, 100), .7f, 0, 0));
-	//lights.push_back(new Light(Vector2(500, 100), 0, .7f, 0));
-	//lights.push_back(new Light(Vector2(100, 500), .7f, 0, 0));
-	////lights.push_back(new Light(Vector2(500, 500), 0, .7f, 0));
 
 	for (int i = 0; i < num_lights; i++) {
 		Light* light = new Light(Vector2(random()*SCREEN_WIDTH, random()*SCREEN_HEIGHT), random(), random(), random());
-		//Light* light = new Light(Vector2(random()*SCREEN_WIDTH, random()*SCREEN_HEIGHT), 1,1,1);
-		
-
 		lights.push_back(light);
 	}
 }
@@ -308,43 +291,59 @@ void buildCreatures() {
 	}
 }
 
-void inputTesting(unsigned char key, int x, int y) {
-	Creature* creature = creatures[0];
-	int step = 10;
-	if (key == 'w') {
-		creature->location.addY(step);
+
+void constructEnvironment() {
+
+	cout << "(Hitting enter and leaving a filename blank randomizes the setup)" << endl << endl;
+
+	string creature_file;
+	string light_file;
+
+	cout << "Robot file?\t";
+	getline(cin, creature_file);
+	cout << endl;
+	cout << "Light file?\t";
+	getline(cin, light_file);
+
+	cout << endl << endl;
+
+	if (creature_file == "") {
+		buildCreatures();
+		cout << "~Robots Built~" << endl;
 	}
-	else if (key == 's') {
-		creature->location.addY(-step);
+	else {
+		// Build creatures from file
 	}
-	else if (key == 'a') {
-		creature->direction += step;
+
+	if (light_file == "") {
+		buildLights();
+		cout << "~Lights Built~" << endl;
 	}
-	else if (key == 'd') {
-		creature->direction -= step;
+	else {
+		// Build lights from file
 	}
 }
 
 int main(int argc, char** argv) {
 	srand(static_cast <unsigned> (time(0)));
-	glutInit(&argc, argv);
 
-	buildLights();
-	buildCreatures();
+	// Builds creatures and lights
+	constructEnvironment();
+
+	glutInit(&argc, argv);
 
 	glutInitDisplayMode(GLUT_DOUBLE);
 	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glutInitWindowPosition(800, 100);
 	glutCreateWindow("Ayy");
 	glutDisplayFunc(display);
-	glutKeyboardFunc(inputTesting);
 
 	glewExperimental = GL_TRUE;
 	GLenum glewError = glewInit();
 
 	if (glewError == GLEW_OK) {
-		printf(" 8^) \n");
-		testingInitialization();
+		printf("\n\n 8^) \n");
+		setupGlut();
 		glutMainLoop();
 	}
 	else {
