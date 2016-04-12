@@ -11,6 +11,7 @@ class Creature {
 public:
 
 	const float robot_speed = 0.5f;
+	const float robot_turn_rate = 25.0f;
 
 	Vector2 location;
 	float direction;

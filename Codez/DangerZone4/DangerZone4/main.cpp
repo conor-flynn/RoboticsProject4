@@ -22,6 +22,7 @@ const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
 const int num_creatures = 100;
 const int num_lights = 500;
+const float ambient_light = 0.4f;
 
 vector<Light*> lights;
 vector<Creature*> creatures;
@@ -32,6 +33,7 @@ int shaderProgram;
 
 
 float random() {
+	// Returns a float 0 to 1
 	return ((float)rand() / RAND_MAX);
 }
 
@@ -46,99 +48,58 @@ float readPixel(int x, int y) {
 	float r = (float)pixel[0] / 255.0f;
 	float g = (float)pixel[1] / 255.0f;
 	float b = (float)pixel[2] / 255.0f;
+
+	// This has no impact on how the screen is drawn, it just is used to give the sensor-information to the robots
+	// If a larger value is returned, then the robots react more strongly (their wheels spin faster).
 	float result = sqrt((r*r) + (g*g) + (b*b));
 	result = r + g + b;
-	return result;
 
-	/*cout << "R: " << (float)pixel[0] / 255.0 << endl;
-	cout << "G: " << (float)pixel[1] / 255.0 << endl;
-	cout << "B: " << (float)pixel[2] / 255.0 << endl;
-	cout << endl;*/
+	return result;
 }
 
 float readPixel(Vector2 v) {
 	return readPixel(v.getX(), v.getY());
 }
 
-void drawRect(int x0, int y0, int width, int height, float z = 0) {
-	glBegin(GL_QUADS); {
-		glVertex3f(x0, y0, z);
-		glVertex3f(x0, y0 + height, z);
-		glVertex3f(x0 + width, y0 + height, z);
-		glVertex3f(x0 + width, y0, z);
-	} glEnd();
-}
 
 void drawLights() {
-	float ambience = 0.4f;
-	glClearColor(ambience, ambience, ambience,1); // Ambient lighting
+	glClearColor(ambient_light, ambient_light, ambient_light,1); // Ambient lighting
 	for (Light* light : lights) {
 
-		//// --- Clear / Setup process
-		//	glUseProgram(0);
-
-		//	glColorMask(1, 1, 1, 1);
-		//	glDepthMask(GL_TRUE);
-		//	glEnable(GL_DEPTH_TEST);
-
-		//	glClearDepth(0);
-		//	glClear(GL_DEPTH_BUFFER_BIT);	// We only clear the depth bit, not the colors. Otherwise that will override the other lights.
-
-		//	// These four lines repeat a process because 'glClearDepth(0)' doesn't clear to 0....!
-		//	glEnable(GL_DEPTH_TEST);
-		//	glDepthFunc(GL_ALWAYS);
-		//	glColorMask(0, 0, 0, 0);
-		//	drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-		//// Setup for a light is complete.
-
-
-		//for (Creature* creature : creatures) {
-		//	vector<Vector2> vertices = creature->getVertices();
-		//	for (int i = 0; i < vertices.size(); i++) {
-		//		Vector2 currentVertex = vertices[i];
-		//		Vector2 nextVertex = vertices[(i + 1) % vertices.size()];
-		//		Vector2 edge = Vector2::subtract(nextVertex, currentVertex);
-		//		Vector2 normal = Vector2(edge.getY(), -edge.getX());
-		//		Vector2 lightToCurrent = Vector2::subtract(currentVertex, light->location);
-
-
-		//		if (Vector2::dot(normal, lightToCurrent) > 0) {
-		//			Vector2 point1 = Vector2::add(currentVertex, Vector2::subtract(currentVertex, light->location).scale(800));
-		//			Vector2 point2 = Vector2::add(nextVertex, Vector2::subtract(nextVertex, light->location).scale(800));
-
-		//			float zed = 1;
-		//			glBegin(GL_QUADS); {
-		//			glVertex3f(currentVertex.getX(), currentVertex.getY(), zed);
-		//			glVertex3f(point1.getX(), point1.getY(), zed);
-		//			glVertex3f(point2.getX(), point2.getY(), zed);
-		//			glVertex3f(nextVertex.getX(), nextVertex.getY(), zed);
-		//			} glEnd();
-
-		//		}
-		//	}
-		//}
-		
-
-		// Shadows are drawn. Now we draw the dank lights
-
 		glEnable(GL_DEPTH_TEST);
-		// glDepthFunc(GL_EQUAL);	// Draws light (blending) when the depth of a pixel is equal to 0
 		glDepthFunc(GL_ALWAYS);
 		glColorMask(1, 1, 1, 1);
 
-		glUseProgram(shaderProgram);
+		glUseProgram(shaderProgram);	// Uses Light.frag (Light.fragment : processes pixels
 		glUniform2f(glGetUniformLocation(shaderProgram, "lightLocation"), light->location.getX(), SCREEN_HEIGHT - light->location.getY());
 		glUniform3f(glGetUniformLocation(shaderProgram, "lightColor"), light->red, light->green, light->blue);
-		glUniform1f(glGetUniformLocation(shaderProgram, "depthZed"), 0);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
 
-		// Applies the shader for the current light to the ENTIRE screen. The shadowed areas are calculated beforehand
+		
+
+		/*
+		// 'Redraws' the whole screen. Only useful with VERY large lights
+		// This quad is all the pixels that get passed to the shader
+		// However, with small lights, there are a lot of pixels processed that could never possibly be impacted by small lights
 		glBegin(GL_QUADS); {
 			glVertex2f(0, 0);
 			glVertex2f(0, SCREEN_HEIGHT);
 			glVertex2f(SCREEN_WIDTH, SCREEN_HEIGHT);
 			glVertex2f(SCREEN_WIDTH, 0);
+		} glEnd();*/
+
+
+		Vector2 point = light->location;
+		float max_light_distance = 300;
+		// Only redraws part of the screen that could reasonably be impacted by the light
+		// Since we are using VERY small lights, the light probably doesn't go further than 50 pixels in any direction, but its better to be safe
+		// Testing: Needs to be larger than 10, otherwise it cuts off light
+		glBegin(GL_QUADS); {
+			glVertex2f(point.getX() - max_light_distance, point.getY()- max_light_distance);
+			glVertex2f(point.getX() - max_light_distance, point.getY()+ max_light_distance);
+			glVertex2f(point.getX() + max_light_distance, point.getY()+ max_light_distance);
+			glVertex2f(point.getX() + max_light_distance, point.getY()- max_light_distance);
 		} glEnd();
 
 	}
@@ -158,14 +119,6 @@ void drawCreatures() {
 		vector<Vector2> sensors = creature->getSensors();
 		creature->processSensors(readPixel(sensors[0]), readPixel(sensors[1]));
 
-		/*
-		// Draws the sensors for debugging (and colors them by how much light they are sensing)
-		for (Vector2 sensor : sensors) {
-			float color = readPixel(sensor);
-			glColor3f(color, 0, 0);
-			tempSquare(sensor.getX(), sensor.getY());
-		}*/
-
 		Vector2 location = creature->location;
 		if (location.getX() < 0) location.setX(SCREEN_WIDTH);
 		if (location.getX() > SCREEN_WIDTH) location.setX(0);
@@ -173,15 +126,9 @@ void drawCreatures() {
 		if (location.getY() > SCREEN_HEIGHT) location.setY(0);
 		creature->location = location;
 
+		// Draws the creature as just an outline
 		glBegin(GL_LINE_LOOP); {
 			for (Vector2 vertex : creature->getVertices()) {
-
-				if (random() > 0.5f) {
-					glColor3f(0, 0, 0);
-				}
-				else {
-					glColor3f(1, 1, 1);
-				}
 				glColor3f(0, 0, 0);
 				glVertex2f(vertex.getX(), vertex.getY());
 			}
@@ -190,6 +137,9 @@ void drawCreatures() {
 }
 
 void display() {
+	// Main display function for the window
+
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	// =~ =~ =~ =~ =~ =~ =~ =~ =~ =~ =~ 
 	drawLights();
@@ -212,6 +162,9 @@ char* readFile(char* file_name, unsigned long & size) {
 }
 
 void setupGlut() {
+	// Sets up the shader, and sets up OpenGl for the top-down 2D view
+
+
 
 	unsigned long size_of_shader_file = 0;
 	char* shader_data = readFile("Light.frag", size_of_shader_file);
@@ -266,14 +219,17 @@ void setupGlut() {
 }
 
 void buildLights() {
+	// Randomizes the lights
 
 	for (int i = 0; i < num_lights; i++) {
+		// Random position, random color
 		Light* light = new Light(Vector2(random()*SCREEN_WIDTH, random()*SCREEN_HEIGHT), random(), random(), random());
 		lights.push_back(light);
 	}
 }
 
 void buildCreatures() {
+	// Randomizes the creatures
 
 	for (int i = 0; i < num_creatures; i++) {
 		float locx = (random() * SCREEN_WIDTH);
@@ -284,6 +240,7 @@ void buildCreatures() {
 		float k21 = random();
 		float k22 = random();
 
+		// Overwriting randoms: These values cause the creatures to avoid light.
 		k11 = k22 = 0;
 		k12 = k21 = 1;
 
@@ -312,7 +269,7 @@ void constructEnvironment() {
 		cout << "~Robots Built~" << endl;
 	}
 	else {
-		// Build creatures from file
+		// TODO: Build creatures from file
 	}
 
 	if (light_file == "") {
@@ -320,7 +277,7 @@ void constructEnvironment() {
 		cout << "~Lights Built~" << endl;
 	}
 	else {
-		// Build lights from file
+		// TODO: Build lights from file
 	}
 }
 
@@ -335,7 +292,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_DOUBLE);
 	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glutInitWindowPosition(800, 100);
-	glutCreateWindow("Ayy");
+	glutCreateWindow("Project 4");
 	glutDisplayFunc(display);
 
 	glewExperimental = GL_TRUE;
