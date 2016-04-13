@@ -7,9 +7,9 @@ main.cpp
 Structure for Robot Input File:
 
 		"number_of_robots
-		k11 k12 k21 k22 xloc yloc
+		k11 k12 k21 k22 xloc yloc dir
 		...
-		k11 k12 k21 k22 xloc yloc"
+		k11 k12 k21 k22 xloc yloc dir"
 
 
 Structure for Light Input File:
