@@ -1,6 +1,12 @@
-﻿  main.cpp
-d:\_misc\documents\visual studio 2015\projects\dangerzone4\dangerzone4\main.cpp(153): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+﻿  Vector2.cpp
+d:\users\conor\desktop\robotics\roboticsproject4\codez\dangerzone4\dangerzone4\vector2.cpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\users\conor\desktop\robotics\roboticsproject4\codez\dangerzone4\dangerzone4\vector2.cpp(56): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  main.cpp
+d:\users\conor\desktop\robotics\roboticsproject4\codez\dangerzone4\dangerzone4\main.cpp(116): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-d:\_misc\documents\visual studio 2015\projects\dangerzone4\dangerzone4\main.cpp(206): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+d:\users\conor\desktop\robotics\roboticsproject4\codez\dangerzone4\dangerzone4\main.cpp(235): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-  DangerZone4.vcxproj -> D:\_Misc\Documents\Visual Studio 2015\Projects\DangerZone4\Debug\DangerZone4.exe
+  Light.cpp
+  Creature.cpp
+  Generating Code...
+  DangerZone4.vcxproj -> D:\Users\conor\Desktop\robotics\RoboticsProject4\Codez\DangerZone4\Debug\DangerZone4.exe
