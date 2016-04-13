@@ -181,6 +181,9 @@ void drawCreatures() {
 
 		vector<Vector2> sensors = creature->getSensors();
 		creature->processSensors(readPixel(sensors[0]), readPixel(sensors[1]));
+	}
+
+	for (Creature* creature : creatures) {
 
 		Vector2 location = creature->location;
 		if (location.getX() < 0) location.setX(SCREEN_WIDTH);

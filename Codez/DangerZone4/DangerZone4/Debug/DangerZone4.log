@@ -4,7 +4,7 @@ d:\users\conor\desktop\robotics\roboticsproject4\codez\dangerzone4\dangerzone4\v
   main.cpp
 d:\users\conor\desktop\robotics\roboticsproject4\codez\dangerzone4\dangerzone4\main.cpp(116): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-d:\users\conor\desktop\robotics\roboticsproject4\codez\dangerzone4\dangerzone4\main.cpp(235): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+d:\users\conor\desktop\robotics\roboticsproject4\codez\dangerzone4\dangerzone4\main.cpp(238): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
   Light.cpp
   Creature.cpp
